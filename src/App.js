@@ -1,25 +1,44 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import ContactsApp from "./components/ContactsApp"
+import axios from 'axios'
 
 class App extends Component {
+
+state = {
+  contacts: []
+};
+
+async fetchUsers(){
+  const res = await fetch("https://api.randomuser.me/?nat=us,gb&results=50")
+  const data = await res.json();
+  //console.log(data.results)
+  const userContacts = data.results.map( (user) => ({
+        name: `${user.name.first} ${user.name.last}`,
+        email: user.email,
+        thumbnail: user.picture.thumbnail
+    }) )
+  this.setState({contacts: userContacts});
+}
+
+componentDidMount(){
+    // fetch("https://api.randomuser.me/?nat=us,gb&results=50")
+    // .then(response => response.json())
+    // .then(data => data.results.map( (user)=>(
+    //     {
+    //         name: `${user.name.first} ${user.name.last}`,
+    //         email: user.email,
+    //         thumbnail: user.picture.thumbnail
+    //     }
+    // )))
+    // .then(contacts => this.setState({contacts}))
+    this.fetchUsers();
+}
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <ContactsApp contacts={this.state.contacts} />
       </div>
     );
   }
